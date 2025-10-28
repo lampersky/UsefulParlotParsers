@@ -8,7 +8,7 @@ namespace Parlot.UsefulParsers
         public static bool ReadSingleQuotedIdentifier(this Scanner scanner) => scanner.ReadSingleQuotedIdentifier(out _);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool ReadSingleQuotedIdentifier(this Scanner scanner, out TokenResult result)
+        public static bool ReadSingleQuotedIdentifier(this Scanner scanner, out ReadOnlySpan<char> result)
         {
             return scanner.ReadQuotedIdentifier('\'', out result);
         }
@@ -17,7 +17,7 @@ namespace Parlot.UsefulParsers
         public static bool ReadDoubleQuotedIdentifier(this Scanner scanner) => scanner.ReadDoubleQuotedIdentifier(out _);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool ReadDoubleQuotedIdentifier(this Scanner scanner, out TokenResult result)
+        public static bool ReadDoubleQuotedIdentifier(this Scanner scanner, out ReadOnlySpan<char> result)
         {
             return scanner.ReadQuotedIdentifier('\"', out result);
         }
@@ -26,17 +26,17 @@ namespace Parlot.UsefulParsers
         public static bool ReadSquareBracketsQuotedIdentifier(this Scanner scanner) => scanner.ReadSquareBracketsQuotedIdentifier(out _);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool ReadSquareBracketsQuotedIdentifier(this Scanner scanner, out TokenResult result)
+        public static bool ReadSquareBracketsQuotedIdentifier(this Scanner scanner, out ReadOnlySpan<char> result)
         {
             return scanner.ReadQuotedIdentifier('[', ']', out result);
         }
 
-        private static bool ReadQuotedIdentifier(this Scanner scanner, char quoteChar, out TokenResult result)
+        private static bool ReadQuotedIdentifier(this Scanner scanner, char quoteChar, out ReadOnlySpan<char> result)
         {
             return scanner.ReadQuotedIdentifier(quoteChar, quoteChar, out result);
         }
 
-        private static bool ReadQuotedIdentifier(this Scanner scanner, char quoteStartChar, char quoteEndChar, out TokenResult result)
+        private static bool ReadQuotedIdentifier(this Scanner scanner, char quoteStartChar, char quoteEndChar, out ReadOnlySpan<char> result)
         {
             var first = scanner.Cursor.Current;
 
@@ -74,11 +74,11 @@ namespace Parlot.UsefulParsers
                     throw new ParseException("Invalid zero length identifier.", scanner.Cursor.Position);
                 }
 
-                result = TokenResult.Succeed(scanner.Buffer, start, scanner.Cursor.Offset);
+                result = scanner.Buffer.AsSpan(start, scanner.Cursor.Offset - start);
                 return true;
             }
 
-            result = TokenResult.Fail();
+            result = [];
 
             return false;
         }
@@ -86,7 +86,7 @@ namespace Parlot.UsefulParsers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ReadQuotedIdentifier(this Scanner scanner, Func<char, bool> isQuoteStartChar, Func<char, char> getQuoteEndChar) => scanner.ReadQuotedIdentifier(isQuoteStartChar, getQuoteEndChar, out _);
 
-        private static bool ReadQuotedIdentifier(this Scanner scanner, Func<char, bool> isQuoteStartChar, Func<char, char> getQuoteEndChar, out TokenResult result)
+        private static bool ReadQuotedIdentifier(this Scanner scanner, Func<char, bool> isQuoteStartChar, Func<char, char> getQuoteEndChar, out ReadOnlySpan<char> result)
         {
             var first = scanner.Cursor.Current;
             if (isQuoteStartChar(first))
@@ -96,7 +96,7 @@ namespace Parlot.UsefulParsers
                 return scanner.ReadQuotedIdentifier(first, quoteEndChar, out result);
             }
 
-            result = TokenResult.Fail();
+            result = [];
 
             return false;
         }

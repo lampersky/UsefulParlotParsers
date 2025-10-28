@@ -45,10 +45,7 @@ public sealed class SkipExtendedWhiteSpaceParser<T> : Parser<T>, ICompilable, IS
 
     public CompilationResult Compile(CompilationContext context)
     {
-        var result = new CompilationResult();
-
-        var success = context.DeclareSuccessVariable(result, false);
-        var value = context.DeclareValueVariable(result, Expression.Default(typeof(T)));
+        var result = context.CreateCompilationResult<T>();
 
         var start = context.DeclarePositionVariable(result);
 
@@ -62,8 +59,8 @@ public sealed class SkipExtendedWhiteSpaceParser<T> : Parser<T>, ICompilable, IS
                 Expression.IfThenElse(
                     parserCompileResult.Success,
                     Expression.Block(
-                        context.DiscardResult ? Expression.Empty() : Expression.Assign(value, parserCompileResult.Value),
-                        Expression.Assign(success, Expression.Constant(true, typeof(bool)))
+                        context.DiscardResult ? Expression.Empty() : Expression.Assign(result.Value, parserCompileResult.Value),
+                        Expression.Assign(result.Success, Expression.Constant(true, typeof(bool)))
                         ),
                     context.ResetPosition(start)
                     )

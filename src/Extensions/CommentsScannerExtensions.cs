@@ -138,11 +138,11 @@ namespace Parlot.UsefulParsers
             throw new ParseException($"Missing end comment mark '{commentEndSymbol}'.", scanner.Cursor.Position);
         }
 
-        public static bool ReadSingleLineComment(this Scanner scanner, Func<Cursor, bool> isCommentStartSymbol, out TokenResult result)
+        public static bool ReadSingleLineComment(this Scanner scanner, Func<Cursor, bool> isCommentStartSymbol, out ReadOnlySpan<char> result)
         {
             if (scanner.Cursor.Eof || !isCommentStartSymbol(scanner.Cursor))
             {
-                result = TokenResult.Fail();
+                result = [];
                 return false;
             }
 
@@ -155,25 +155,25 @@ namespace Parlot.UsefulParsers
 
             scanner.Cursor.Advance(1);
 
-            result = TokenResult.Succeed(scanner.Buffer, start, scanner.Cursor.Offset);
+            result = scanner.Buffer.AsSpan(start, scanner.Cursor.Offset - start);
             return true;
         }
 
-        public static bool ReadSingleLineComment(this Scanner scanner, char commentStartSymbol, out TokenResult result)
+        public static bool ReadSingleLineComment(this Scanner scanner, char commentStartSymbol, out ReadOnlySpan<char> result)
         {
             return scanner.ReadSingleLineComment(c => c.PeekNext(c.Offset) == commentStartSymbol, out result);
         }
 
-        public static bool ReadSingleLineComment(this Scanner scanner, string commentStartSymbol, out TokenResult result)
+        public static bool ReadSingleLineComment(this Scanner scanner, string commentStartSymbol, out ReadOnlySpan<char> result)
         {
             return scanner.ReadSingleLineComment(c => c.Buffer.AsSpan(c.Offset, commentStartSymbol.Length).StartsWith(commentStartSymbol.AsSpan()), out result);
         }
 
-        public static bool ReadMultiLineComment(this Scanner scanner, string commentStartSymbol, string commentEndSymbol, bool isNestingAllowed, out TokenResult result)
+        public static bool ReadMultiLineComment(this Scanner scanner, string commentStartSymbol, string commentEndSymbol, bool isNestingAllowed, out ReadOnlySpan<char> result)
         {
             if (scanner.Cursor.Eof || string.IsNullOrEmpty(commentStartSymbol))
             {
-                result = TokenResult.Fail();
+                result = [];
                 return false;
             }
 
@@ -182,7 +182,7 @@ namespace Parlot.UsefulParsers
 
             if (!span.StartsWith(startSymbol))
             {
-                result = TokenResult.Fail();
+                result = [];
                 return false;
             }
 
@@ -216,7 +216,7 @@ namespace Parlot.UsefulParsers
                         scanner.Cursor.Advance(endSymbol.Length);
                         if (endCount >= startCount)
                         {
-                            result = TokenResult.Succeed(scanner.Buffer, start, scanner.Cursor.Offset);
+                            result = scanner.Buffer.AsSpan(start, scanner.Cursor.Offset - start);
                             return true;
                         }
                     }
@@ -249,7 +249,7 @@ namespace Parlot.UsefulParsers
                         }
                         else
                         {
-                            result = TokenResult.Succeed(scanner.Buffer, start, scanner.Cursor.Offset);
+                            result = scanner.Buffer.AsSpan(start, scanner.Cursor.Offset - start);
                             return true;
                         }
                     }

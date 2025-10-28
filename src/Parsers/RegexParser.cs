@@ -44,10 +44,7 @@ namespace Parlot.UsefulParsers
 
         public CompilationResult Compile(CompilationContext context)
         {
-            var result = new CompilationResult();
-
-            var success = context.DeclareSuccessVariable(result, false);
-            var value = context.DeclareValueVariable(result, Expression.Default(typeof(TextSpan)));
+            var result = context.CreateCompilationResult<TextSpan>();
 
             // var start = context.Scanner.Cursor.Offset;
 
@@ -81,10 +78,10 @@ namespace Parlot.UsefulParsers
                             Expression.Assign(start, Expression.Add(context.Offset(), context.GetRegexMatchIndex(match))),
                             context.Advance(Expression.Add(context.GetRegexMatchIndex(match), context.GetRegexMatchLength(match))),
                             Expression.Assign(end, context.Offset()),
-                            Expression.Assign(success, Expression.Constant(true, typeof(bool))),
+                            Expression.Assign(result.Success, Expression.Constant(true, typeof(bool))),
                             context.DiscardResult
                             ? Expression.Empty()
-                            : Expression.Assign(value,
+                            : Expression.Assign(result.Value,
                                 context.NewTextSpan(
                                     context.Buffer(),
                                     start,
