@@ -1,8 +1,9 @@
-﻿using Parlot.FLuent;
-using Parlot.UsefulParsers;
+﻿using Lampersky.UsefulParsers;
+using Parlot;
+using Parlot.Fluent;
 using System.Text.RegularExpressions;
 
-namespace Parlot.Fluent
+namespace Lampersky.Fluent
 {
     public static class LiteralBuilderExtensions
     {

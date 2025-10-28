@@ -1,8 +1,10 @@
-﻿using System.Linq.Expressions;
+﻿using Parlot;
+using Parlot.Compilation;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace Parlot.Compilation
+namespace Lampersky.Compilation
 {
     public static class RegexExpressionHelper
     {

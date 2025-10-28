@@ -1,31 +1,42 @@
-﻿using Parlot.Compilation;
+﻿using Lampersky.Compilation;
+using Parlot;
+using Parlot.Compilation;
 using Parlot.Fluent;
+using Parlot.Rewriting;
+using Parlot.UsefulParsers;
 using System.Linq.Expressions;
 
-namespace Parlot.UsefulParsers
+namespace Lampersky.UsefulParsers
 {
-    /// <summary>
-    /// Scans the input buffer until non of the provided predicate conditions is met.
-    /// 
-    /// This parser can by used to build more complicated White Space and Comment parsers.
-    /// </summary>
-    public sealed class ExtendedWhiteSpaceParser : Parser<TextSpan>, ICompilable
+    public sealed class CustomIdentifierParser : Parser<TextSpan>, ICompilable, ISeekable
     {
-        private readonly Func<Scanner, bool>[] _predicates;
-        public ExtendedWhiteSpaceParser(params Func<Scanner, bool>[] predicates)
+        private readonly Func<char, bool> _extraStart;
+        private readonly Func<char, bool> _extraPart;
+        private readonly char[] _expectedChars;
+
+        public bool CanSeek => true;
+
+        public char[] ExpectedChars => _expectedChars;
+
+        public bool SkipWhitespace => true;
+
+        public CustomIdentifierParser(Func<char, bool> isStart, Func<char, bool> isPart)
         {
-            _predicates = predicates;
+            _extraStart = isStart;
+            _extraPart = isPart;
+            _expectedChars = CustomIdentifierCharacters.GetCustomIdentifierExpectedCharacters(_extraStart);
         }
 
         public override bool Parse(ParseContext context, ref ParseResult<TextSpan> result)
         {
+            context.EnterParser(this);
+
             var start = context.Scanner.Cursor.Offset;
 
-            var success = context.Scanner.Until(_predicates);
+            var success = context.Scanner.ReadFirstThenOthers(_extraStart, _extraPart);
 
             var end = context.Scanner.Cursor.Offset;
 
-            //TODO: maybe good to add "&& start != end"
             if (success)
             {
                 result.Set(start, end, new TextSpan(context.Scanner.Buffer, start, end - start));
@@ -49,20 +60,20 @@ namespace Parlot.UsefulParsers
 
             result.Body.Add(Expression.Assign(start, context.Offset()));
 
-            var until = context.Until(_predicates);
+            var readCustomIdentifier = context.ReadFirstThenOthers(_extraStart, _extraPart);
 
-            // if (context.Scanner.Until())
+            // if (context.Scanner.ReadFirstThenOthers(_extraStart, _extraPart))
             // {
             //     var end = context.Scanner.Cursor.Offset;
             //     success = true;
-            //     value = new TextSpan(context.Scanner.Buffer, start, end - start - 1);
+            //     value = new TextSpan(context.Scanner.Buffer, start, end - start);
             // }
 
             var end = Expression.Variable(typeof(int), $"end{context.NextNumber}");
 
             result.Body.Add(
                 Expression.IfThen(
-                    until,
+                    readCustomIdentifier,
                     Expression.Block(
                         new[] { end },
                         Expression.Assign(end, context.Offset()),

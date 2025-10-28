@@ -1,6 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Parlot;
+using System.Runtime.CompilerServices;
 
-namespace Parlot.UsefulParsers
+namespace Lampersky.UsefulParsers
 {
     public static class IdentifiersScannerExtensions
     {

@@ -1,7 +1,7 @@
-﻿using Parlot.Compilation;
+﻿using Parlot;
 using Parlot.Fluent;
 
-namespace Parlot.UsefulParsers
+namespace Lampersky.UsefulParsers
 {
     public sealed class DebugParser<T> : Parser<T>/*, ICompilable*/
     {

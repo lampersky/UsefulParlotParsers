@@ -1,10 +1,14 @@
-﻿using Parlot.Compilation;
+﻿using Lampersky.Compilation;
+using Lampersky.Sql.Extensions;
+using Lampersky.UsefulParsers;
+using Parlot;
+using Parlot.Compilation;
 using Parlot.Fluent;
 using Parlot.Rewriting;
-using Parlot.Sql.Extensions;
+using Parlot.UsefulParsers;
 using System.Linq.Expressions;
 
-namespace Parlot.UsefulParsers
+namespace Lampersky.UsefulParsers
 {
     public enum IdentifierQuotes
     {

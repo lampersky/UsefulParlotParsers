@@ -1,7 +1,8 @@
-﻿using Parlot.Sql.Extensions;
+﻿using Lampersky.Sql.Extensions;
+using Parlot;
 using System.Runtime.CompilerServices;
 
-namespace Parlot.UsefulParsers
+namespace Lampersky.UsefulParsers
 {
     public static class CommentsScannerExtensions
     {

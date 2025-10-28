@@ -1,9 +1,11 @@
-﻿using Parlot.Compilation;
+﻿using Lampersky.Compilation;
+using Parlot;
+using Parlot.Compilation;
 using Parlot.Fluent;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-namespace Parlot.UsefulParsers
+namespace Lampersky.UsefulParsers
 {
     public sealed class RegexParser : Parser<TextSpan>, ICompilable
     {

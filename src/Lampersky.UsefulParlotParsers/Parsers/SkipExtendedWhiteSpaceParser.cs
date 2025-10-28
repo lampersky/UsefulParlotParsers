@@ -1,5 +1,7 @@
-﻿namespace Parlot.UsefulParsers.Parsers;
+﻿namespace Lampersky.UsefulParsers.Parsers;
 
+using Lampersky.Compilation;
+using Parlot;
 using Parlot.Compilation;
 using Parlot.Fluent;
 using Parlot.Rewriting;

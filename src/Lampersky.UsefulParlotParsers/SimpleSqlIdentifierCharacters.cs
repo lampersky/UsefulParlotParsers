@@ -1,4 +1,6 @@
-﻿namespace Parlot.FLuent
+﻿using Parlot;
+
+namespace Lampersky.Fluent
 {
     public static class SimpleSqlIdentifierCharacters
     {
