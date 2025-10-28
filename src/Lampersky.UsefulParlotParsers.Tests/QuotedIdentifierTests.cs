@@ -171,7 +171,7 @@ namespace Lampersky.UsefulParsers.Tests
         [Theory]
         [InlineData("[1][2][3][4]", new[] { "1", "2", "3", "4" })]
         [InlineData("'1'\"2\"`3`[4]", new[] { "1", "2", "3", "4" })]
-        public void ShuldParseQuotedIdentifiersLiterals(string input, string[] expected)
+        public void ShouldParseQuotedIdentifiersLiterals(string input, string[] expected)
         {
             OneOrMany(LiteralIdentifierCompiledParser).TryParse(input, out var identifiers);
             Assert.Equal(identifiers.ToArray(), expected);

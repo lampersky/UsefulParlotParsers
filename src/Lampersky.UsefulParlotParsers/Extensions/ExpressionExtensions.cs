@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Lampersky.Sql.Extensions
+namespace Lampersky.UsefulParsers
 {
     public static class ExpressionExtensions
     {
